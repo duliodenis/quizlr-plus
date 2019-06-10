@@ -29,11 +29,21 @@ class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
   QuizBrain quizBrain = QuizBrain();
 
-  bool isAnswerCorrect(bool answer) {
-    if (answer == quizBrain.getQuestionAnswer()) {
-      return true;
+  void checkAnswer(bool userPickedAnswer) {
+    if (userPickedAnswer == quizBrain.getQuestionAnswer()) {
+      scoreKeeper.add(Icon(
+        Icons.check,
+        color: Colors.green,
+      ));
+    } else {
+      scoreKeeper.add(Icon(
+        Icons.close,
+        color: Colors.red,
+      ));
     }
-    return false;
+    setState(() {
+      quizBrain.nextQuestion();
+    });
   }
 
   @override
@@ -60,31 +70,21 @@ class _QuizPageState extends State<QuizPage> {
         ),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.all(15.0),
-            child: FlatButton(
-              textColor: Colors.white,
-              color: Colors.green,
-              child: Text(
-                'True',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                ),
-              ),
-              onPressed: () {
-                //The user picked true.
-                setState(() {
-                  if (isAnswerCorrect(true)) {
-                    // set a check mark
-                    print('Correct');
-                  } else {
-                    print('Wrong');
-                  }
-                  quizBrain.nextQuestion();
-                });
-              },
-            ),
-          ),
+              padding: EdgeInsets.all(15.0),
+              child: FlatButton(
+                  textColor: Colors.white,
+                  color: Colors.green,
+                  child: Text(
+                    'True',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                  onPressed: () {
+                    //The user picked true.
+                    checkAnswer(true);
+                  })),
         ),
         Expanded(
           child: Padding(
@@ -100,20 +100,15 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                setState(() {
-                  if (isAnswerCorrect(false)) {
-                    // set a check mark
-                    print('Correct');
-                  } else {
-                    print('Wrong');
-                  }
-                  quizBrain.nextQuestion();
-                });
+                checkAnswer(false);
               },
             ),
           ),
         ),
         //TODO: Add a Row here as your score keeper
+        Row(
+          children: scoreKeeper,
+        )
       ],
     );
   }
